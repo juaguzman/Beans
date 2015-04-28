@@ -1,5 +1,5 @@
 
-import fabrica.datos.EntidadDAO;
+
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,9 +19,9 @@ import javax.swing.*;
  */
 public class QueryFrom extends javax.swing.JPanel {
 
-    private Color fondo;
+    public Color fondo;
     private  EntidadDAO entidad;
-    private String[] registro;
+    public String[] registro;
     
     /**
      * Creates new form QueryFrom
@@ -138,14 +138,14 @@ public class QueryFrom extends javax.swing.JPanel {
    public void setTabla(String nTabla) throws SQLException
    {
         entidad = new EntidadDAO(nTabla);
-        cargardatos("","");
+        cargarDatos("","");
    }
    public String[] getRegistro()
    {
        return registro;
    }
    
-   public void cargardatos(String criterio, String valor) throws SQLException
+   public void cargarDatos(String criterio, String valor) throws SQLException
    {
        try{
            Object[] etiquetas = entidad.darEtiquetas(criterio, valor);
