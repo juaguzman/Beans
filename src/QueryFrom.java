@@ -1,5 +1,11 @@
 
+import fabrica.datos.EntidadDAO;
 import java.awt.Color;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,10 +20,14 @@ import java.awt.Color;
 public class QueryFrom extends javax.swing.JPanel {
 
     private Color fondo;
+    private  EntidadDAO entidad;
+    private String[] registro;
+    
     /**
      * Creates new form QueryFrom
      */
-    public QueryFrom() {
+    public QueryFrom() 
+    {
         initComponents();
     }
 
@@ -31,16 +41,14 @@ public class QueryFrom extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable = new javax.swing.JTable();
+        miTabla = new javax.swing.JTable();
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
-        jComboBox1 = new javax.swing.JComboBox();
+        lstCriterio = new javax.swing.JComboBox();
         label3 = new java.awt.Label();
         txtValor = new javax.swing.JTextField();
-        btnAceptar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
 
-        jTable.setModel(new javax.swing.table.DefaultTableModel(
+        miTabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -51,19 +59,15 @@ public class QueryFrom extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable);
+        jScrollPane1.setViewportView(miTabla);
 
         label1.setText("Busqueda");
 
         label2.setText("Criterio");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        lstCriterio.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         label3.setText("Valor");
-
-        btnAceptar.setText("Aceptar");
-
-        btnCancelar.setText("Cancelar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -80,15 +84,9 @@ public class QueryFrom extends javax.swing.JPanel {
                             .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox1, 0, 273, Short.MAX_VALUE)
+                            .addComponent(lstCriterio, 0, 273, Short.MAX_VALUE)
                             .addComponent(txtValor))))
                 .addContainerGap(15, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAceptar)
-                .addGap(18, 18, 18)
-                .addComponent(btnCancelar)
-                .addGap(32, 32, 32))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -100,46 +98,92 @@ public class QueryFrom extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lstCriterio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAceptar)
-                    .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        label1.getAccessibleContext().setAccessibleName("Busqueda");
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAceptar;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable;
     private java.awt.Label label1;
     private java.awt.Label label2;
     private java.awt.Label label3;
+    private javax.swing.JComboBox lstCriterio;
+    private javax.swing.JTable miTabla;
     private javax.swing.JTextField txtValor;
     // End of variables declaration//GEN-END:variables
 
     /**
      * @return the fondo
      */
-    public Color getFondo() {
+    public Color getFondo()
+    {
         return fondo;
     }
 
     /**
      * @param fondo the fondo to set
      */
-    public void setFondo(Color fondo) {
+    public void setFondo(Color fondo)
+    {
         this.fondo = fondo;
         setBackground(fondo);
     }
-}
+    
+   public void setTabla(String nTabla) throws SQLException
+   {
+        entidad = new EntidadDAO(nTabla);
+        cargardatos("","");
+   }
+   public String[] getRegistro()
+   {
+       return registro;
+   }
+   
+   public void cargardatos(String criterio, String valor) throws SQLException
+   {
+       try{
+           Object[] etiquetas = entidad.darEtiquetas(criterio, valor);
+           ResultSet rs = entidad.darRegistros(criterio, valor);
+           DefaultTableModel modelo = new DefaultTableModel()
+           {
+               public boolean isCellEditable(int row, int column)
+               { 
+                   return false;
+               }
+           };
+           miTabla.setModel(modelo);
+           if(lstCriterio.getItemCount()==0)
+           {
+               for(int i=0;i<etiquetas.length;i++)
+               {
+                   lstCriterio.addItem(etiquetas[i]);
+               }
+           }
+           for(int i =0;i<etiquetas.length;i++)
+           {
+               modelo.addColumn(etiquetas[i]);
+           }
+                    while(rs.next())
+                    {
+                        String[] fila=new String[etiquetas.length];
+                        for(int i=0;i<etiquetas.length;i++)
+                        {
+                            fila[i] = rs.getString(i+1);
+                        }
+                        modelo.addRow(fila);
+                    }
+                    rs.close();
+           }
+       catch(SQLException e)
+       {
+         JOptionPane.showMessageDialog(this, e.getMessage(),"error",JOptionPane.ERROR_MESSAGE);
+       }
+       }
+   }
+
